@@ -48,11 +48,17 @@
     (:action move
         :parameters (?from ?to - cells)
         :precondition (and 
-                            
-                            
+            (at-hero ?from)
+            (connected ?from ?to)
+            (not (has-trap ?from))
+            (not (is-destroyed ?to))
+            (not (has-trap ?to))
+            (not (has-monster ?to))
         )
         :effect (and 
-                            
+            (not (at-hero ?from))
+            (at-hero ?to)
+            (is-destroyed ?from)
                 )
     )
     
@@ -60,10 +66,17 @@
     (:action move-to-trap
         :parameters (?from ?to - cells)
         :precondition (and 
-                            
+            (at-hero ?from)
+            (connected ?from ?to)
+            (arm-free)
+            (not (has-trap ?from))
+            (not (is-destroyed ?to))
+            (has-trap ?to)       
         )
         :effect (and 
-                            
+            (not (at-hero ?from))
+            (at-hero ?to)
+            (is-destroyed ?from)        
                 )
     )
 
@@ -71,10 +84,17 @@
     (:action move-to-monster
         :parameters (?from ?to - cells ?s - swords)
         :precondition (and 
-                            
+            (at-hero ?from)
+            (connected ?from ?to)
+            (holding ?s)
+            (not (has-trap ?from))
+            (not (is-destroyed ?to))
+            (has-monster ?to)
         )
         :effect (and 
-                            
+            (not (at-hero ?from))
+            (at-hero ?to)
+            (is-destroyed ?from)                            
                 )
     )
     
@@ -82,10 +102,14 @@
     (:action pick-sword
         :parameters (?loc - cells ?s - swords)
         :precondition (and 
-                            
+            (at-hero ?loc)
+            (at-sword ?s ?loc)
+            (arm-free)     
                       )
         :effect (and
-                            
+            (not (at-sword ?s ?loc))
+            (not (arm-free))
+            (holding ?s)
                 )
     )
     
@@ -93,10 +117,13 @@
     (:action destroy-sword
         :parameters (?loc - cells ?s - swords)
         :precondition (and 
-                            
+            (holding ?s)
+            (not (has-trap ?loc))
+            (not (has-monster ?loc))      
                       )
         :effect (and
-                            
+            (not (holding ?s))
+            (arm-free)
                 )
     )
     
@@ -104,10 +131,13 @@
     (:action disarm-trap
         :parameters (?loc - cells)
         :precondition (and 
-                            
+            (arm-free)
+            (at-hero ?loc)
+            (has-trap ?loc) 
                       )
         :effect (and
-                            
+            (trap-disarmed ?loc)
+            (not (has-trap ?loc))     
                 )
     )
     
